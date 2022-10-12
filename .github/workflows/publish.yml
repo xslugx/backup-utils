@@ -56,10 +56,13 @@ jobs:
         
         make dist
         make deb
+        
+        # this makes the .changes file for the ppa upload
+        debuild -S -sa
 
     - name: Creating PPA configuration
       run: |
-        echo "[ppa]" >> $HOME/.dput.cf
+        echo "[reddit-ppa]" >> $HOME/.dput.cf
         echo "fqdn = ppa.launchpad.net" >> $HOME/.dput.cf
         echo "method = ftp" >> $HOME/.dput.cf
         echo "incoming = ${{ secrets.PPA_INCOMING }}" >> $HOME/.dput.cf
@@ -69,4 +72,5 @@ jobs:
     - name: Publishing to PPA
       run: |
         cd $GITHUB_WORKSPACE
-        dput ppa ../automysqlbackup_$(echo $GITHUB_REF | grep -oP "([0-9].*)" )_source.changes
+        ls -lha
+        # dput reddit-ppa ../automysqlbackup_$(echo $GITHUB_REF | grep -oP "([0-9].*)" )_source.changes
