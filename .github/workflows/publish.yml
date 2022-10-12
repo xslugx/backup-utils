@@ -1,0 +1,72 @@
+---
+name: Deploy to launchpad.net
+
+on:
+  push:
+    tags:
+     - v*.*.*-reddit*
+
+jobs:
+  build:
+    name: Packaging software
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+    - name: Import GPG key
+      uses: crazy-max/ghaction-import-gpg@v4
+      with:
+        gpg_private_key: ${{ secrets.GPG_SIGNING_KEY }}
+
+    - name: Trust key
+      run: |
+        gpg --no-tty --command-fd 0 --edit-key ${{ secrets.GPG_KEY_ID }} <<EOTRUST
+        trust
+        5
+        y
+        quit
+        EOTRUST
+
+    - name: List keys
+      run: gpg -K
+
+    - name: Run install commands
+      run: sudo apt-get install dput devscripts debhelper moreutils
+
+    - name: Creating verion
+      run: |
+        cd $GITHUB_WORKSPACE
+
+        echo -e '$RELEASE_VERSION' >> share/github-backup-utils/version
+
+        echo -e "github-backup-utils ($RELEASE_VERSION); urgency=medium\n" >> debian/changelog
+        echo -e "  * built in CI\n" >> debian/changelog
+        echo " -- github-actions  $(date +'%a, %d %b %Y %T %z')" >> debian/changelog
+
+        cat debian/changelog
+
+    - name: Building Github Backup Utils
+      run: |
+        cd $GITHUB_WORKSPACE
+        
+        make dist
+        make deb
+
+    - name: Creating PPA configuration
+      run: |
+        echo "[ppa]" >> $HOME/.dput.cf
+        echo "fqdn = ppa.launchpad.net" >> $HOME/.dput.cf
+        echo "method = ftp" >> $HOME/.dput.cf
+        echo "incoming = ${{ secrets.PPA_INCOMING }}" >> $HOME/.dput.cf
+        echo "login = anonymous" >> $HOME/.dput.cf
+        echo "allow_unsigned_uploads = 0" >> $HOME/.dput.cf
+
+    - name: Publishing to PPA
+      run: |
+        cd $GITHUB_WORKSPACE
+        dput ppa ../automysqlbackup_$(echo $GITHUB_REF | grep -oP "([0-9].*)" )_source.changes
