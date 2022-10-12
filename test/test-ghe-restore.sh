@@ -6,6 +6,7 @@
 . "$(dirname "$0")/testlib.sh"
 
 setup_test_data "$GHE_DATA_DIR/1"
+setup_actions_enabled_settings_for_restore true
 
 # Make the current symlink
 ln -s 1 "$GHE_DATA_DIR/current"
@@ -56,10 +57,10 @@ begin_test "ghe-restore into configured vm"
   cat "$TRASHDIR/restore-out"
 
   # verify connect to right host
-  grep -q "Connect 127.0.0.1:22 OK" "$TRASHDIR/restore-out"
+  grep -q "Connect 127.0.0.1:122 OK" "$TRASHDIR/restore-out"
 
   # verify stale servers were cleared
-  grep -q "ghe-cluster-cleanup-node OK" "$TRASHDIR/restore-out"
+  grep -q "Cleaning up stale nodes ..." "$TRASHDIR/restore-out"
 
   # Verify all the data we've restored is as expected
   verify_all_restored_data
@@ -141,11 +142,11 @@ begin_test "ghe-restore -c into unconfigured vm"
   fi
 
   # verify connect to right host
-  grep -q "Connect 127.0.0.1:22 OK" "$TRASHDIR/restore-out"
+  grep -q "Connect 127.0.0.1:122 OK" "$TRASHDIR/restore-out"
 
   # verify attempt to clear stale servers was not made
-  grep -q "ghe-cluster-cleanup-node OK" "$TRASHDIR/restore-out" && {
-    echo "ghe-cluster-cleanup-node should not run on unconfigured nodes."
+  grep -q "Cleaning up stale nodes ..." "$TRASHDIR/restore-out" && {
+    echo "Unconfigured nodes should not be cleaned up."
     exit 1
   }
 
@@ -175,11 +176,11 @@ begin_test "ghe-restore into unconfigured vm"
   ! grep -q "ghe-config-apply OK" "$TRASHDIR/restore-out"
 
   # verify connect to right host
-  grep -q "Connect 127.0.0.1:22 OK" "$TRASHDIR/restore-out"
+  grep -q "Connect 127.0.0.1:122 OK" "$TRASHDIR/restore-out"
 
   # verify attempt to clear stale servers was not made
-  grep -q "ghe-cluster-cleanup-node OK" "$TRASHDIR/restore-out" && {
-    echo "ghe-cluster-cleanup-node should not run on unconfigured nodes."
+  grep -q "Cleaning up stale nodes ..." "$TRASHDIR/restore-out" && {
+    echo "Unconfigured nodes should not be cleaned up."
     exit 1
   }
 
@@ -215,7 +216,7 @@ begin_test "ghe-restore with host arg and config value"
   rm "$GHE_BACKUP_CONFIG_TEMP"
 
   # verify host arg overrides configured restore host
-  echo "$output" | grep -q 'Connect localhost:22 OK'
+  echo "$output" | grep -q 'Connect localhost:122 OK'
 
   # Verify all the data we've restored is as expected
   verify_all_restored_data
@@ -239,7 +240,7 @@ begin_test "ghe-restore with host arg"
   output="$(ghe-restore -f localhost)" || false
 
   # verify host arg overrides configured restore host
-  echo "$output" | grep -q 'Connect localhost:22 OK'
+  echo "$output" | grep -q 'Connect localhost:122 OK'
 
   # Verify all the data we've restored is as expected
   verify_all_restored_data
@@ -393,6 +394,40 @@ begin_test "ghe-restore with Actions settings"
   for secret in "${required_secrets[@]}"; do
     [ "$(ghe-ssh "$GHE_HOSTNAME" -- ghe-config "$secret")" = "foo" ]
   done
+)
+end_test
+
+begin_test "ghe-restore stops and starts Actions"
+(
+  set -e
+  rm -rf "$GHE_REMOTE_ROOT_DIR"
+  setup_remote_metadata
+  enable_actions
+
+  setup_maintenance_mode "configured"
+
+  output=$(ghe-restore -v -f localhost 2>&1)
+
+  echo "$output" | grep -q "ghe-actions-stop .* OK"
+  echo "$output" | grep -q "ghe-actions-start .* OK"
+)
+end_test
+
+begin_test "ghe-restore does not attempt to start Actions during cleanup if they never have been stopped"
+(
+  set -e
+  rm -rf "$GHE_REMOTE_ROOT_DIR"
+  setup_remote_metadata
+  enable_actions
+
+  setup_maintenance_mode "configured"
+  # We are not in maintance mode which means that we don't stop Actions and abort early.
+  disable_maintenance_mode
+
+  ! output=$(ghe-restore -v -f localhost 2>&1)
+
+  ! echo "$output" | grep -q "ghe-actions-stop"
+  ! echo "$output" | grep -q "ghe-actions-start"
 )
 end_test
 
@@ -666,3 +701,17 @@ end_test
 #     verify_all_restored_data
 # )
 # end_test
+
+begin_test "ghe-restore fails if Actions is disabled in the backup but enabled on the appliance"
+(
+  set -e
+  rm -rf "$GHE_REMOTE_ROOT_DIR"
+  setup_remote_metadata
+  setup_actions_enabled_settings_for_restore false
+  enable_actions
+
+  setup_maintenance_mode "configured"
+
+  ! ghe-restore -v -f localhost
+)
+end_test
