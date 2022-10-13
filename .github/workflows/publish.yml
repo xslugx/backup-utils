@@ -51,6 +51,10 @@ jobs:
           echo " -- github-actions  $(date +'%a, %d %b %Y %T %z')" >> debian/changelog
 
           cat debian/changelog
+          
+      - name: Building Github Backup Utils
+        run: |
+          cat share/github-backup-utils/version
 
       - name: Building Github Backup Utils
         run: |
