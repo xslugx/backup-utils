@@ -56,6 +56,8 @@ jobs:
           # prepend the new stuff above to the changelog
           cat new_change | cat - debian/changelog > /tmp/new_changelog && mv /tmp/new_changelog debian/changelog
 
+          sed -i "s/@@VERSION@@/${RELEASE_VERSION}/g" debian/control
+
           cat debian/changelog
 
       - name: Building Github Backup Utils

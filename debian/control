@@ -5,12 +5,13 @@ Priority: optional
 Standards-Version: 4.5.1
 Build-Depends: debhelper (>= 9), gawk, git, moreutils, jq, pigz, rsync (>= 2.6.4), help2man,
 Homepage: https://github.com/github/backup-utils
-Vcs-Git: https://github.com/github/backup-utils.git
-Vcs-Browser: https://github.com/github/backup-utils
+Vcs-Git: https://github.com/reddit/backup-utils.git
+Vcs-Browser: https://github.com/reddit/backup-utils
 Rules-Requires-Root: no
 
 Package: github-backup-utils
 Architecture: all
+Version: @@VERSION@@
 Depends: ${misc:Depends}, rsync (>= 2.6.4), moreutils, jq, git, gawk, pigz
 Description: Backup and recovery utilities for GitHub Enterprise Server
  The backup utilities implement a number of advanced capabilities for backup
