@@ -16,7 +16,9 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Set env
-      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      run: |
+        echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        echo "$GITHUB_ENV"
 
     - name: Import GPG key
       uses: crazy-max/ghaction-import-gpg@v4
@@ -42,7 +44,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
 
-        echo -e '$RELEASE_VERSION' >> share/github-backup-utils/version
+        echo -e "$RELEASE_VERSION" >> share/github-backup-utils/version
 
         echo -e "github-backup-utils ($RELEASE_VERSION); urgency=medium\n" >> debian/changelog
         echo -e "  * built in CI\n" >> debian/changelog
