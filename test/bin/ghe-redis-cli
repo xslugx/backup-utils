@@ -18,11 +18,6 @@ while true; do
         echo "fake redis data" > "$GHE_REMOTE_DATA_USER_DIR/redis/dump.rdb"
         break
         ;;
-    mset)
-        # Fake accepting of mset command
-        shift 9
-        break
-        ;;
     --remote)
         # Fake accepting hostname argument
         shift 3

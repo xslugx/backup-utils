@@ -1,4 +1,2 @@
-.git/
-.github/
-.gitattributes
-.gitignore
+*
+!share/github-backup-utils/ghe-docker-init
