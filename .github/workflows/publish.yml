@@ -56,7 +56,7 @@ jobs:
           github-backup-utils (${DEB_VERSION}) UNRELEASED; urgency=medium
             * built in CI
           
-           -- github-actions $(date +'%a, %d %b %Y %T %z')
+           -- github-actions <github@github.com> $(date +'%a, %d %b %Y %T %z')
            
           EOF
           
@@ -72,7 +72,7 @@ jobs:
           make dist
 
           # this makes the .changes file for the ppa upload
-          debuild -S -sa -v ${DEB_VERSION}
+          debuild -S -sa -v${DEB_VERSION}
 
           ls -lha
 
