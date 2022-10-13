@@ -74,7 +74,7 @@ jobs:
           # this makes the .changes file for the ppa upload
           debuild -S -sa -v${DEB_VERSION}
 
-          ls -lha
+          ls -lha ../github-backup-utils*
 
       - name: Creating PPA configuration
         run: |
@@ -88,5 +88,4 @@ jobs:
       - name: Publishing to PPA
         run: |
           cd $GITHUB_WORKSPACE
-          ls -lha
-          # dput reddit-ppa ../automysqlbackup_$(echo $GITHUB_REF | grep -oP "([0-9].*)" )_source.changes
+          dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_source.changes
