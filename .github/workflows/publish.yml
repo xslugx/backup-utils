@@ -47,16 +47,16 @@ jobs:
           # remove v prefix from version
           DEB_VERSION="${RELEASE_VERSION#v}"
           # replace - with ~ in DEB_VERSION
-          DEB_VERSION="${DEB_VERSION/-/\~}"
+          # DEB_VERSION="${DEB_VERSION/-/\~}"
 
           echo -e "$DEB_VERSION" > share/github-backup-utils/version
           echo "DEB_VERSION=\"${DEB_VERSION}\"" >> $GITHUB_ENV
           
           cat > new_change << EOF
-          github-backup-utils (${DEB_VERSION}) UNRELEASED; urgency=medium
+          github-backup-utils (${DEB_VERSION}); urgency=medium
             * built in CI
           
-           -- github-actions <github@github.com> $(date +'%a, %d %b %Y %T %z')
+           -- github-actions <github@github.com>  $(date +'%a, %d %b %Y %T %z')
            
           EOF
           
