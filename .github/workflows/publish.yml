@@ -38,7 +38,7 @@ jobs:
         run: gpg -K
 
       - name: Run install commands
-        run: sudo apt-get install dput devscripts debhelper moreutils
+        run: sudo apt-get install -y dput devscripts debhelper moreutils help2man
 
       - name: Creating version
         run: |
@@ -47,7 +47,7 @@ jobs:
           echo -e "$RELEASE_VERSION" > share/github-backup-utils/version
           
           cat > new_change << EOF
-          github-backup-utils (${RELEASE_VERSION}); urgency=medium
+          github-backup-utils (${RELEASE_VERSION}) UNRELEASED; urgency=medium
             * built in CI
            -- github-actions $(date +'%a, %d %b %Y %T %z')
            
@@ -56,19 +56,19 @@ jobs:
           # prepend the new stuff above to the changelog
           cat new_change | cat - debian/changelog > /tmp/new_changelog && mv /tmp/new_changelog debian/changelog
 
-          sed -i "s/@@VERSION@@/${RELEASE_VERSION}/g" debian/control
-
           cat debian/changelog
 
       - name: Building Github Backup Utils
         run: |
-          cd $GITHUB_WORKSPACE
+          cd "$GITHUB_WORKSPACE"
 
           make dist
           make deb
 
+          ls -lha
+
           # this makes the .changes file for the ppa upload
-          debuild -S -sa
+          debuild -S -sa -v ${RELEASE_VERSION}
 
       - name: Creating PPA configuration
         run: |
