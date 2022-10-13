@@ -45,16 +45,18 @@ jobs:
           cd "$GITHUB_WORKSPACE"
 
           echo -e "$RELEASE_VERSION" > share/github-backup-utils/version
-
-          echo -e "github-backup-utils ($RELEASE_VERSION); urgency=medium\n" >> debian/changelog
-          echo -e "  * built in CI\n" >> debian/changelog
-          echo " -- github-actions  $(date +'%a, %d %b %Y %T %z')" >> debian/changelog
+          
+          cat > new_change << EOF
+          github-backup-utils (${RELEASE_VERSION}); urgency=medium
+            * built in CI
+           -- github-actions $(date +'%a, %d %b %Y %T %z')
+           
+          EOF
+          
+          # prepend the new stuff above to the changelog
+          cat new_change | cat - debian/changelog > debian/changelog
 
           cat debian/changelog
-          
-      - name: Building Github Backup Utils
-        run: |
-          cat share/github-backup-utils/version
 
       - name: Building Github Backup Utils
         run: |
