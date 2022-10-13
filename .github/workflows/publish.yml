@@ -44,14 +44,13 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE"
 
-
           # remove v prefix from version
-          DEB_VERSION=${RELEASE_VERSION#v}
+          DEB_VERSION="${RELEASE_VERSION#v}"
           # replace - with ~ in DEB_VERSION
-          DEB_VERSION=${DEB_VERSION//-/~}
+          DEB_VERSION="${DEB_VERSION/-/\~}"
 
           echo -e "$DEB_VERSION" > share/github-backup-utils/version
-          echo "DEB_VERSION=${DEB_VERSION}" >> $GITHUB_ENV
+          echo "DEB_VERSION=\"${DEB_VERSION}\"" >> $GITHUB_ENV
           
           cat > new_change << EOF
           github-backup-utils (${DEB_VERSION}) UNRELEASED; urgency=medium
