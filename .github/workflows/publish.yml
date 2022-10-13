@@ -53,7 +53,7 @@ jobs:
           echo "DEB_VERSION=\"${DEB_VERSION}\"" >> $GITHUB_ENV
           
           cat > new_change << EOF
-          github-backup-utils (${DEB_VERSION}); urgency=medium
+          github-backup-utils (${DEB_VERSION}) UNRELEASED; urgency=medium
             * built in CI
           
            -- github-actions <github@github.com>  $(date +'%a, %d %b %Y %T %z')
