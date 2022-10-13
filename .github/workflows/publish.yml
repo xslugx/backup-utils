@@ -42,9 +42,9 @@ jobs:
 
     - name: Creating verion
       run: |
-        cd $GITHUB_WORKSPACE
+        cd "$GITHUB_WORKSPACE"
 
-        echo -e "$RELEASE_VERSION" >> share/github-backup-utils/version
+        echo -e "$RELEASE_VERSION" > share/github-backup-utils/version
 
         echo -e "github-backup-utils ($RELEASE_VERSION); urgency=medium\n" >> debian/changelog
         echo -e "  * built in CI\n" >> debian/changelog
