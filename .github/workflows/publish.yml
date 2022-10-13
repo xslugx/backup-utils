@@ -76,6 +76,8 @@ jobs:
 
           ls -lha ../github-backup-utils*
 
+          debsign -k ${{ secrets.GPG_KEY_ID }} ../github-backup-utils_${DEB_VERSION}_source.changes
+
       - name: Creating PPA configuration
         run: |
           echo "[reddit-ppa]" >> $HOME/.dput.cf
