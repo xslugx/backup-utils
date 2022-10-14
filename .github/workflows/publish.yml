@@ -93,5 +93,5 @@ jobs:
       - name: Publishing to PPA
         run: |
           cd $GITHUB_WORKSPACE
-          echo -e "dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes"
-          dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes
+          echo -e "dput --unchecked reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes"
+          dput --unchecked reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes
