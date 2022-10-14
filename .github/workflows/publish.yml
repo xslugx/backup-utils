@@ -71,10 +71,10 @@ jobs:
           cd "$GITHUB_WORKSPACE"
 
           make dist
-          make deb
+          # make deb
 
           # this makes the .changes file for the ppa upload
-          # debuild -S -sa -uc -us -v${DEB_VERSION}
+          debuild -S -sa -uc -us -v${DEB_VERSION}
 
           ls -lha ../github-backup-utils*
 
