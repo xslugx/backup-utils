@@ -75,11 +75,11 @@ jobs:
           # make deb
 
           # this makes the .changes file for the ppa upload
-          debuild -b -uc -us -v${DEB_VERSION}
+          debuild -S -sa -v${DEB_VERSION} -k${{ steps.gpg.outputs.keyid }}
 
           ls -lha ../github-backup-utils*
 
-          debsign -k${{ steps.gpg.outputs.keyid }} ../github-backup-utils_${DEB_VERSION}_amd64.changes
+          # debsign -k${{ steps.gpg.outputs.keyid }} ../github-backup-utils_${DEB_VERSION}_source.changes
 
       - name: Creating PPA configuration
         run: |
@@ -93,5 +93,5 @@ jobs:
       - name: Publishing to PPA
         run: |
           cd $GITHUB_WORKSPACE
-          echo -e "dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes"
-          dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes
+          echo -e "dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_source.changes"
+          dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_source.changes
