@@ -91,4 +91,4 @@ jobs:
       - name: Publishing to PPA
         run: |
           cd $GITHUB_WORKSPACE
-          dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_source.changes
+          dput --unchecked reddit-ppa ../github-backup-utils_${DEB_VERSION}_source.changes
