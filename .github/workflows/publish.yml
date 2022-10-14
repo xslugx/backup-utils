@@ -79,7 +79,7 @@ jobs:
 
           ls -lha ../github-backup-utils*
 
-          debsign -k${{ steps.gpg.outputs.keyid }} ../github-backup-utils_${DEB_VERSION}_source.changes
+          debsign -k${{ steps.gpg.outputs.keyid }} ../github-backup-utils_${DEB_VERSION}_amd64.changes
 
       - name: Creating PPA configuration
         run: |
