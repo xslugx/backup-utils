@@ -73,7 +73,7 @@ jobs:
           make dist
 
           # this makes the .changes file for the ppa upload
-          debuild -S -sa -v${DEB_VERSION}
+          debuild -S -sa -uc -us -v${DEB_VERSION}
 
           ls -lha ../github-backup-utils*
 
