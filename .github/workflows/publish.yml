@@ -77,7 +77,7 @@ jobs:
 
           ls -lha ../github-backup-utils*
 
-          debsign -k ${{ steps.gpg.outputs.email }} ../github-backup-utils_${DEB_VERSION}_source.changes
+          # debsign -k ${{ steps.gpg.outputs.email }} ../github-backup-utils_${DEB_VERSION}_source.changes
 
       - name: Creating PPA configuration
         run: |
