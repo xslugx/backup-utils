@@ -75,11 +75,11 @@ jobs:
           # make deb
 
           # this makes the .changes file for the ppa upload
-          debuild -uc -us -v${DEB_VERSION} -k${{ secrets.GPG_KEY_ID }}
+          debuild -uc -us -v${DEB_VERSION} -k${{ steps.gpg.outputs.keyid }} 
 
           ls -lha ../github-backup-utils*
 
-          # debsign -k ${{ steps.gpg.outputs.email }} ../github-backup-utils_${DEB_VERSION}_source.changes
+          debsign -k${{ steps.gpg.outputs.keyid }} ../github-backup-utils_${DEB_VERSION}_source.changes
 
       - name: Creating PPA configuration
         run: |
