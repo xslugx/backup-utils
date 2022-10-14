@@ -64,3 +64,45 @@ Immediately after making a release using one of the methods above, verify the re
 - asset download links for the latest release at https://github.com/github/backup-utils/releases all download the correct version of Backup Utilities,
 - the stable branch is inline with master - https://github.com/github/backup-utils/compare/stable...master.
 - sync this repository to backup-utils-private
+
+## Updating GPG keys for the Github Action to publish the package
+
+To generate the keys:
+
+1. Make sure your terminal is set up for using the OpenGPG util by adding this to `~/.profile`, `./bashrc` or `./zshrc`:
+    ```bash
+    GPG_TTY=$(tty)
+    export GPG_TTY
+    ```
+1. Run through the generation process
+    ```bash
+    gpg --full-generate-key
+    ```
+	Make sure you pick rsa2048, remember the passcode, use the same email as the account you use for launchpad.
+1. Get the key id:
+    ```bash
+    $ gpg --list-secret-keys --keyid-format=long
+    
+    /Users/user.name/.gnupg/pubring.kbx
+    --------------------------------------
+    
+    sec   rsa2048/KEYIDISHERE 2022-10-14 [SC]
+          FINGERPRINTISHERE
+    uid                 [ultimate] User Name <user@email.com>
+    ssb   rsa2048/IGNORETHISONE 2022-10-14 [E]
+    ```
+1. Upload the key to the ubuntu keyserver
+    ```bash
+    gpg --keyserver keyserver.ubuntu.com --send-keys KEYIDISHERE
+	  ```
+1. Go to launchpad and paste in the FINGERPRINTISHERE into the key import
+	[https://launchpad.net/~useruser/+editpgpkeys](https://launchpad.net/~useruser/+editpgpkeys)
+1. Export the secret key, it will ask for the passcode
+    ```bash
+    gpg --armor --export-secret-key KEYIDISHERE
+    ```
+1. Update both the private key `GPG_SIGNING_KEY` and the passcode `GPG_PASSCODE` in the secrets for the repository. If necessary, set `PPA_INCOMING` to the path you're trying to upload to (eg. `~useruser/ubuntu/ppa-name`)
+1. If your team uses a password manager, make sure to update the keys there as well, you can export the public key like this:
+    ```bash
+    gpg --armor --export KEYIDISHERE
+    ```
