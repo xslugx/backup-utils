@@ -74,7 +74,7 @@ jobs:
           # make deb
 
           # this makes the .changes file for the ppa upload
-          debuild -uc -us -v${DEB_VERSION}
+          debuild -uc -us -v${DEB_VERSION} -k${{ secrets.GPG_KEY_ID }}
 
           ls -lha ../github-backup-utils*
 
@@ -93,4 +93,4 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           echo -e "dput --unchecked reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes"
-          dput --unchecked reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes
+          dput reddit-ppa ../github-backup-utils_${DEB_VERSION}_amd64.changes
