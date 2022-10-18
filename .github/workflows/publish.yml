@@ -50,8 +50,10 @@ jobs:
           DEB_VERSION="${RELEASE_VERSION#v}"
           # replace - with ~ in DEB_VERSION
           DEB_VERSION="${DEB_VERSION/-/\~}"
+          
+          GITHUB_BACKUP_UTILS_VERSION="${DEB_VERSION/\~reddit*}"
 
-          echo -e "$DEB_VERSION" > share/github-backup-utils/version
+          echo -e "$GITHUB_BACKUP_UTILS_VERSION" > share/github-backup-utils/version
           echo "DEB_VERSION=${DEB_VERSION}" >> $GITHUB_ENV
           
           cat > new_change << EOF
